@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Battery Safety System — Live Demo</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    margin: 0;
+    padding: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+  }
+  #battery-demo {
+    background: #0f172a;
+    padding: 24px;
+    border-radius: 12px;
+    max-width: 900px;
+    width: 100%;
+  }
+  .demo-header { text-align: center; margin-bottom: 20px; }
+  .demo-header h2 { margin: 0; color: #38bdf8; font-size: 22px; }
+  .demo-header p { margin: 6px 0 0; color: #94a3b8; font-size: 13px; }
+  .main-stage { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+  .rack-panel { flex: 1; min-width: 280px; background: #1e293b; border-radius: 10px; padding: 16px; border: 1px solid #334155; }
+  .rack-title { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin-bottom: 12px; font-weight: 600; }
+  .battery-rack { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .cell { height: 42px; border-radius: 6px; background: #0ea5e9; border: 2px solid #0284c7; position: relative; transition: all 0.3s; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.8); }
+  .cell.anomaly { background: #f59e0b; border-color: #d97706; animation: pulse-warning 1s infinite; }
+  .cell.critical { background: #ef4444; border-color: #b91c1c; animation: pulse-danger 0.5s infinite; }
+  .cell.safe { background: #10b981; border-color: #059669; }
+  @keyframes pulse-warning { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+  @keyframes pulse-danger { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.7; transform: scale(1.05); } }
+  .sensor-strip { display: flex; gap: 6px; margin-top: 12px; justify-content: center; flex-wrap: wrap; }
+  .sensor-tag { font-size: 10px; padding: 3px 8px; border-radius: 4px; background: #334155; color: #cbd5e1; border: 1px solid #475569; }
+  .sensor-tag.active { background: #f59e0b; color: #1e293b; border-color: #f59e0b; font-weight: 700; }
+  .sensor-tag.triggered { background: #ef4444; color: white; border-color: #ef4444; font-weight: 700; }
+  .right-panel { flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 12px; }
+  .info-card { background: #1e293b; border-radius: 10px; padding: 14px; border: 1px solid #334155; }
+  .info-card h3 { margin: 0 0 8px; font-size: 13px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+  .timeline { position: relative; padding-left: 20px; max-height: 160px; overflow-y: auto; }
+  .timeline::before { content: ''; position: absolute; left: 5px; top: 4px; bottom: 4px; width: 2px; background: #475569; }
+  .timeline-item { position: relative; margin-bottom: 10px; font-size: 12px; }
+  .timeline-item::before { content: ''; position: absolute; left: -17px; top: 4px; width: 8px; height: 8px; border-radius: 50%; background: #475569; }
+  .timeline-item.ai-detect::before { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+  .timeline-item.mcu-act::before { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
+  .timeline-item.bms-detect::before { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+  .timeline-item.resolved::before { background: #10b981; }
+  .metric-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 12px; }
+  .metric-val { font-family: monospace; font-weight: 700; }
+  .chart-container { height: 120px; position: relative; background: #0f172a; border-radius: 6px; overflow: hidden; }
+  .ctrl-bar { display: flex; gap: 10px; margin-top: 16px; justify-content: center; }
+  button { padding: 10px 24px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+  .btn-primary { background: #38bdf8; color: #0f172a; }
+  .btn-primary:hover { background: #7dd3fc; }
+  .btn-primary:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; }
+  .btn-secondary { background: #334155; color: #e2e8f0; border: 1px solid #475569; }
+  .btn-secondary:hover { background: #475569; }
+  .status-led { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  .led-green { background: #10b981; box-shadow: 0 0 4px #10b981; }
+  .led-yellow { background: #f59e0b; box-shadow: 0 0 4px #f59e0b; }
+  .led-red { background: #ef4444; box-shadow: 0 0 4px #ef4444; }
+  .led-blue { background: #38bdf8; box-shadow: 0 0 4px #38bdf8; }
+  .arch-diagram { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .arch-box { padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center; min-width: 80px; }
+  .arch-sensors { background: #334155; color: #cbd5e1; border: 1px solid #475569; }
+  .arch-mcu { background: #1e3a5f; color: #7dd3fc; border: 1px solid #38bdf8; }
+  .arch-ai { background: #3f2e18; color: #fcd34d; border: 1px solid #f59e0b; }
+  .arch-cloud { background: #1e293b; color: #a5b4fc; border: 1px solid #818cf8; }
+  .arch-arrow { color: #64748b; font-size: 16px; }
+  .layer-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; margin-left: 6px; }
+  .badge-l1 { background: #1e3a5f; color: #7dd3fc; }
+  .badge-l2 { background: #3f2e18; color: #fcd34d; }
+</style>
+</head>
+<body>
+<div id="battery-demo">
+  <div class="demo-header">
+    <h2>🔋 AI Battery Safety System — Live Demo</h2>
+    <p>Layered AI architecture detecting thermal runaway precursors before traditional BMS thresholds</p>
+  </div>
+  <div class="main-stage">
+    <div class="rack-panel">
+      <div class="rack-title">Battery Rack — Module A1</div>
+      <div class="battery-rack" id="rack"></div>
+      <div class="sensor-strip" id="sensors">
+        <span class="sensor-tag" id="s-thermal">🌡️ Thermal</span>
+        <span class="sensor-tag" id="s-gas">💨 Gas H₂/CO</span>
+        <span class="sensor-tag" id="s-volt">⚡ Voltage</span>
+        <span class="sensor-tag" id="s-current">🔌 Current</span>
+        <span class="sensor-tag" id="s-acoustic">🔊 Acoustic</span>
+      </div>
+      <div style="margin-top: 12px; font-size: 11px; color: #64748b; text-align: center;">
+        <span class="status-led led-green" id="rack-status-led"></span>
+        <span id="rack-status-text">System Normal</span>
+      </div>
+    </div>
+    <div class="right-panel">
+      <div class="info-card">
+        <h3>System Architecture</h3>
+        <div class="arch-diagram">
+          <div class="arch-box arch-sensors">Sensors</div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-box arch-ai">AI SoC<br><span style="font-size:9px;font-weight:400">Deep Learning</span></div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-box arch-mcu">Safety MCU<br><span style="font-size:9px;font-weight:400">Deterministic</span></div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-box arch-cloud">Action</div>
+        </div>
+      </div>
+      <div class="info-card">
+        <h3>Live Telemetry</h3>
+        <div class="metric-row"><span>Max Cell Temp</span><span class="metric-val" id="val-temp" style="color:#38bdf8">24.5°C</span></div>
+        <div class="metric-row"><span>H₂ Concentration</span><span class="metric-val" id="val-h2" style="color:#38bdf8">12 ppm</span></div>
+        <div class="metric-row"><span>Voltage Variance</span><span class="metric-val" id="val-volt" style="color:#38bdf8">0.003V</span></div>
+        <div class="metric-row"><span>AI Risk Score</span><span class="metric-val" id="val-risk" style="color:#10b981">0.02</span></div>
+        <div class="metric-row"><span>AI Lead Time</span><span class="metric-val" id="val-lead" style="color:#64748b">—</span></div>
+      </div>
+      <div class="info-card">
+        <h3>Event Timeline</h3>
+        <div class="timeline" id="timeline">
+          <div class="timeline-item">System initialized — all sensors nominal</div>
+        </div>
+      </div>
+      <div class="info-card">
+        <h3>Temperature Trend</h3>
+        <div class="chart-container">
+          <svg id="temp-chart" viewBox="0 0 300 120" preserveAspectRatio="none" style="width:100%;height:100%">
+            <defs>
+              <linearGradient id="grad-normal" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="grad-danger" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ef4444" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#ef4444" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path id="chart-area" d="" fill="url(#grad-normal)"/>
+            <path id="chart-line" d="" fill="none" stroke="#38bdf8" stroke-width="2"/>
+            <line id="threshold-ai" x1="0" y1="40" x2="300" y2="40" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,4" opacity="0.6"/>
+            <line id="threshold-bms" x1="0" y1="20" x2="300" y2="20" stroke="#ef4444" stroke-width="1" stroke-dasharray="4,4" opacity="0.6"/>
+            <text x="280" y="38" fill="#f59e0b" font-size="8" text-anchor="end">AI Threshold</text>
+            <text x="280" y="18" fill="#ef4444" font-size="8" text-anchor="end">BMS Threshold</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ctrl-bar">
+    <button class="btn-primary" id="btn-start" onclick="startSimulation()">▶ Start Simulation</button>
+    <button class="btn-secondary" id="btn-reset" onclick="resetSimulation()">↺ Reset</button>
+  </div>
+</div>
+<script>
+  const cells = [];
+  const rack = document.getElementById('rack');
+  const timeline = document.getElementById('timeline');
+  const tempData = [];
+  let simInterval = null;
+  let phase = 'idle';
+  let timeStep = 0;
+  const MAX_STEPS = 120;
+  for (let i = 0; i < 16; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.textContent = `C${i+1}`;
+    cell.dataset.index = i;
+    rack.appendChild(cell);
+    cells.push(cell);
+  }
+  function addTimeline(text, type = '') {
+    const item = document.createElement('div');
+    item.className = 'timeline-item ' + type;
+    item.innerHTML = text;
+    timeline.appendChild(item);
+    timeline.scrollTop = timeline.scrollHeight;
+  }
+  function updateChart() {
+    const linePath = document.getElementById('chart-line');
+    const areaPath = document.getElementById('chart-area');
+    if (tempData.length < 2) return;
+    const w = 300, h = 120;
+    const maxTemp = 90, minTemp = 20;
+    const points = tempData.map((t, i) => {
+      const x = (i / (MAX_STEPS - 1)) * w;
+      const y = h - ((t - minTemp) / (maxTemp - minTemp)) * h;
+      return [x, y];
+    });
+    let d = `M ${points[0][0]} ${points[0][1]}`;
+    points.slice(1).forEach(p => d += ` L ${p[0]} ${p[1]}`);
+    linePath.setAttribute('d', d);
+    areaPath.setAttribute('d', d + ` L ${w} ${h} L 0 ${h} Z`);
+    const lastTemp = tempData[tempData.length - 1];
+    if (lastTemp > 55) {
+      linePath.setAttribute('stroke', '#ef4444');
+      areaPath.setAttribute('fill', 'url(#grad-danger)');
+    } else if (lastTemp > 40) {
+      linePath.setAttribute('stroke', '#f59e0b');
+    } else {
+      linePath.setAttribute('stroke', '#38bdf8');
+      areaPath.setAttribute('fill', 'url(#grad-normal)');
+    }
+  }
+  function setSensor(id, state) {
+    const el = document.getElementById(id);
+    el.className = 'sensor-tag' + (state ? ' ' + state : '');
+  }
+  function setStatus(text, color) {
+    document.getElementById('rack-status-text').textContent = text;
+    document.getElementById('rack-status-led').className = 'status-led led-' + color;
+  }
+  function updateMetrics(temp, h2, voltVar, risk, lead) {
+    document.getElementById('val-temp').textContent = temp.toFixed(1) + '°C';
+    document.getElementById('val-temp').style.color = temp > 50 ? '#ef4444' : temp > 38 ? '#f59e0b' : '#38bdf8';
+    document.getElementById('val-h2').textContent = h2 + ' ppm';
+    document.getElementById('val-h2').style.color = h2 > 80 ? '#ef4444' : h2 > 40 ? '#f59e0b' : '#38bdf8';
+    document.getElementById('val-volt').textContent = voltVar.toFixed(3) + 'V';
+    document.getElementById('val-risk').textContent = risk.toFixed(2);
+    document.getElementById('val-risk').style.color = risk > 0.7 ? '#ef4444' : risk > 0.3 ? '#f59e0b' : '#10b981';
+    document.getElementById('val-lead').textContent = lead || '—';
+    document.getElementById('val-lead').style.color = lead ? '#10b981' : '#64748b';
+  }
+  function startSimulation() {
+    if (phase !== 'idle') return;
+    document.getElementById('btn-start').disabled = true;
+    phase = 'pre';
+    timeStep = 0;
+    tempData.length = 0;
+    timeline.innerHTML = '';
+    addTimeline('System initialized — all sensors nominal');
+    setStatus('System Normal', 'green');
+    cells.forEach(c => { c.className = 'cell'; c.style.opacity = '1'; });
+    simInterval = setInterval(() => {
+      timeStep++;
+      let temp;
+      if (timeStep < 30) {
+        temp = 24 + Math.random() * 2 + timeStep * 0.05;
+      } else if (timeStep < 55) {
+        temp = 25.5 + (timeStep - 30) * 0.4 + Math.random() * 1.5;
+      } else if (timeStep < 70) {
+        temp = 35.5 + (timeStep - 55) * 1.8 + Math.random() * 2;
+      } else if (timeStep < 85) {
+        temp = 62.5 + (timeStep - 70) * 0.5 + Math.random() * 1;
+      } else if (timeStep < 95) {
+        temp = 70 - (timeStep - 85) * 2.5;
+      } else {
+        temp = 45 - (timeStep - 95) * 0.5 + Math.random();
+      }
+      tempData.push(temp);
+      let h2 = 12;
+      if (timeStep > 45) h2 = 12 + (timeStep - 45) * 2.5;
+      if (timeStep > 75) h2 = 87 + (timeStep - 75) * 3;
+      if (timeStep > 85) h2 = Math.max(15, 120 - (timeStep - 85) * 8);
+      let voltVar = 0.003;
+      if (timeStep > 40) voltVar = 0.003 + (timeStep - 40) * 0.001;
+      if (timeStep > 60) voltVar = 0.023 + (timeStep - 60) * 0.003;
+      if (timeStep > 85) voltVar = Math.max(0.005, 0.098 - (timeStep - 85) * 0.005);
+      let risk = 0.02;
+      if (timeStep > 35) risk = 0.05 + (timeStep - 35) * 0.012;
+      if (timeStep > 50) risk = 0.35 + (timeStep - 50) * 0.025;
+      if (timeStep > 65) risk = Math.min(0.98, 0.725 + (timeStep - 65) * 0.02);
+      if (timeStep > 82) risk = Math.max(0.01, 0.98 - (timeStep - 82) * 0.08);
+      updateMetrics(temp, Math.round(h2), voltVar, risk);
+      updateChart();
+      if (timeStep === 38 && phase === 'pre') {
+        phase = 'anomaly';
+        setSensor('s-volt', 'active');
+        addTimeline('Layer 1 (Feature ML): Voltage variance anomaly detected <span class="layer-badge badge-l1">L1</span>', 'ai-detect');
+        setStatus('Advisory Alert', 'yellow');
+      }
+      if (timeStep === 48 && phase === 'anomaly') {
+        setSensor('s-thermal', 'active');
+        setSensor('s-acoustic', 'active');
+        addTimeline('Layer 2 (Deep Learning): Multi-modal fusion flags thermal runaway precursor <span class="layer-badge badge-l2">L2</span>', 'ai-detect');
+        updateMetrics(temp, Math.round(h2), voltVar, risk, '+32 min');
+        cells[6].className = 'cell anomaly';
+        cells[7].className = 'cell anomaly';
+      }
+      if (timeStep === 55 && phase === 'anomaly') {
+        setSensor('s-gas', 'active');
+        addTimeline('AI Risk Score: 0.42 → Preemptive cooling activated', 'ai-detect');
+      }
+      if (timeStep === 62 && phase === 'anomaly') {
+        phase = 'critical';
+        addTimeline('Layer 1 (Safety MCU): Hard threshold breached — executing emergency shutdown <span class="layer-badge badge-l1">L1</span>', 'mcu-act');
+        setStatus('Emergency Shutdown', 'blue');
+        cells.forEach((c, i) => { if (i !== 6 && i !== 7) c.style.opacity = '0.4'; });
+        cells[6].className = 'cell critical';
+        cells[7].className = 'cell critical';
+      }
+      if (timeStep === 72 && phase === 'critical') {
+        addTimeline('Traditional BMS: Would trigger NOW at 60°C threshold', 'bms-detect');
+        setSensor('s-gas', 'triggered');
+        setSensor('s-thermal', 'triggered');
+      }
+      if (timeStep === 85 && phase === 'critical') {
+        phase = 'resolved';
+        addTimeline('Temperature declining — incident contained', 'resolved');
+        setStatus('Contained — Cooling', 'green');
+        cells[6].className = 'cell safe';
+        cells[7].className = 'cell safe';
+        setSensor('s-gas', '');
+        setSensor('s-thermal', '');
+        setSensor('s-volt', '');
+        setSensor('s-acoustic', '');
+      }
+      if (timeStep >= MAX_STEPS) {
+        clearInterval(simInterval);
+        addTimeline('Simulation complete — AI prevented thermal runaway');
+        document.getElementById('btn-start').disabled = false;
+        phase = 'idle';
+      }
+    }, 120);
+  }
+  function resetSimulation() {
+    clearInterval(simInterval);
+    phase = 'idle';
+    timeStep = 0;
+    tempData.length = 0;
+    timeline.innerHTML = '<div class="timeline-item">System initialized — all sensors nominal</div>';
+    setStatus('System Normal', 'green');
+    cells.forEach(c => { c.className = 'cell'; c.style.opacity = '1'; });
+    ['s-thermal','s-gas','s-volt','s-current','s-acoustic'].forEach(id => setSensor(id, ''));
+    updateMetrics(24.5, 12, 0.003, 0.02, null);
+    document.getElementById('chart-line').setAttribute('d', '');
+    document.getElementById('chart-area').setAttribute('d', '');
+    document.getElementById('btn-start').disabled = false;
+  }
+
+  // Auto-start the simulation as soon as the page finishes loading,
+  // so opening this file in Chrome begins the demo automatically.
+  window.addEventListener('load', function() {
+    startSimulation();
+  });
+</script>
+</body>
+</html>
