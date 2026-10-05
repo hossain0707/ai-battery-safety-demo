@@ -5,14 +5,27 @@ Production-oriented reference implementation for **AI-assisted stationary batter
 > **Safety boundary:** this software is an early-warning and operator decision-support layer. It is **not** a certified BMS, fire panel, PLC, protection relay or emergency shutdown controller. Physical protection remains the responsibility of validated hardwired systems and approved site procedures.
 
 
-## 🚀 Live Demo
+## 🚀 Live Client / Investor Demo
 
-**[▶ Open the Battery Safety Simulation Demo](https://raw.githack.com/hossain0707/ai-battery-safety-demo/main/index.html)**
+### **BatteryGuard AI — Predict. Prevent. Protect.**
 
-The interactive browser demo visualizes the telecom/data-center battery fleet, AI risk scoring, multi-sensor anomaly detection, incident escalation, thermal/risk trends, and the recommendation-only safety architecture.
+**[▶ Launch the Interactive BatteryGuard AI Demo](https://raw.githack.com/hossain0707/ai-battery-safety-demo/main/index.html)**
 
-> Demo mode uses simulated telemetry for demonstration purposes. It is not connected to a real Grameenphone data center or live battery equipment.
+The browser demo is designed as a client-facing product experience, not only a developer dashboard. It includes:
 
+- **Executive / Investor View** for the business and operational story
+- **NOC / Engineering View** for telemetry, risk factors and safety architecture
+- **Guided incident story** showing early AI detection through operator response
+- **Six interactive scenarios:** thermal runaway precursor, off-gas rise, voltage imbalance, cooling failure, BMS alarm and sensor degradation
+- **3D-style battery-room digital twin** with animated rack state
+- **Illustrative Bangladesh multi-site fleet view**
+- **Explainable AI** showing which signals drive the risk score
+- **Predictive-maintenance prioritization** and asset health
+- **Illustrative business-impact view** with clearly labeled simulated values
+- **Downloadable simulated incident intelligence report**
+- **Fail-safe architecture view** showing that BMS/UPS/PLC/fire systems remain authoritative
+
+> **Demo integrity:** all live numbers, financial impact, lead-time values, site counts and incident outcomes shown in the demo are simulated/illustrative unless explicitly stated otherwise. The demo is not connected to Grameenphone infrastructure or any real battery system and is not an official Grameenphone product.
 
 ## What changed
 

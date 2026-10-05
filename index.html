@@ -1,43 +1,450 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Battery Safety Operations Center</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#050914">
+<title>BatteryGuard AI — Mission-Critical Battery Safety Intelligence</title>
 <style>
-:root{--bg:#07111f;--p:#101e32;--l:#263954;--t:#e8eef8;--m:#8ea0b9;--g:#3bd39b;--a:#ffbe4a;--r:#ff5e68;--c:#31c3e5}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(#07111f,#0a1424);color:var(--t);font:14px Inter,system-ui,sans-serif}.wrap{max-width:1450px;margin:auto;padding:20px}
-header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:16px}h1{font-size:22px;margin:0 0 5px}header p{margin:0;color:var(--m);font-size:12px}.badges{display:flex;gap:8px;flex-wrap:wrap}.badge{border:1px solid var(--l);padding:7px 10px;border-radius:999px;color:#bdc9dc;font-size:11px}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--g);margin-right:6px}
-.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}.card{background:linear-gradient(180deg,#14243b,#0c192b);border:1px solid var(--l);border-radius:14px;padding:15px}.kpi{grid-column:span 3}.main{grid-column:span 8}.side{grid-column:span 4}.wide{grid-column:span 12}.label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--m)}.value{font-size:28px;font-weight:800;margin-top:8px}.sub{font-size:10px;color:var(--m);margin-top:3px}
-.title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.title b{font-size:12px;text-transform:uppercase;letter-spacing:.08em}.title span{font-size:10px;color:var(--m)}
-.racks{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.rack{background:#0a1627;border:1px solid var(--l);border-left:3px solid var(--g);border-radius:9px;padding:10px}.rack.advisory{border-left-color:var(--a)}.rack.warning,.rack.critical{border-left-color:var(--r)}.name{font-weight:750}.chem{font-size:10px;color:var(--m);margin:2px 0 12px}.metrics{display:flex;justify-content:space-between;font:11px ui-monospace,monospace}.risk{font-weight:800}.advisory .risk{color:var(--a)}.warning .risk,.critical .risk{color:var(--r)}
-button{border:1px solid var(--l);background:#17304b;color:var(--t);padding:8px 11px;border-radius:8px;cursor:pointer}button.primary{background:#1aa7c7;color:#04121b;border-color:var(--c);font-weight:800}.notice{margin-top:12px;border:1px solid #5a4a25;background:#221d11;padding:10px;border-radius:9px;color:#d7c38f;font-size:11px;line-height:1.45}
-.events{max-height:295px;overflow:auto}.event{padding:9px 0;border-bottom:1px solid #263954;font-size:12px}.event small{display:block;color:var(--m);margin-top:3px}.crit{color:#ff949b}.warn{color:#ffd07c}
-.chart{height:205px;background:#091523;border:1px solid #20324b;border-radius:9px;overflow:hidden}.chart svg{width:100%;height:100%}.f{display:grid;grid-template-columns:115px 1fr 34px;gap:8px;align-items:center;margin:9px 0;font-size:11px}.bar{height:7px;background:#081220;border-radius:5px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,var(--g),var(--a),var(--r))}
-.arch{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}.node{border:1px solid var(--l);background:#091625;border-radius:9px;padding:10px 12px;min-width:170px;text-align:center;font-size:11px}.node strong{display:block;margin-bottom:4px}.arrow{color:#667c9b}.foot{font-size:10px;color:#6f829f;margin-top:14px}
-@media(max-width:950px){.kpi{grid-column:span 6}.main,.side{grid-column:span 12}.racks{grid-template-columns:repeat(2,1fr)}header{flex-direction:column}}@media(max-width:520px){.kpi{grid-column:span 12}.racks{grid-template-columns:1fr}.wrap{padding:12px}}
+:root{
+  --bg:#050914;--bg2:#081120;--panel:rgba(12,23,42,.78);--panel2:rgba(16,31,53,.86);
+  --line:rgba(130,166,214,.16);--line2:rgba(130,166,214,.28);--text:#eef6ff;--muted:#8ca0bb;
+  --cyan:#49ddff;--blue:#6f8cff;--green:#43e7a4;--amber:#ffc65c;--red:#ff6572;--purple:#b58cff;
+  --shadow:0 24px 80px rgba(0,0,0,.38);--radius:20px
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;color:var(--text);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 15% -10%,rgba(73,221,255,.12),transparent 28%),
+    radial-gradient(circle at 90% 8%,rgba(111,140,255,.12),transparent 26%),
+    radial-gradient(circle at 50% 80%,rgba(67,231,164,.06),transparent 30%),
+    linear-gradient(180deg,#050914 0%,#07101e 48%,#050914 100%);
+  min-height:100vh;overflow-x:hidden
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;
+  background-image:linear-gradient(rgba(120,160,210,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(120,160,210,.07) 1px,transparent 1px);
+  background-size:42px 42px;mask-image:linear-gradient(to bottom,black,transparent 76%)
+}
+button,select{font:inherit}
+.shell{max-width:1540px;margin:auto;padding:20px 22px 48px;position:relative}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border-radius:14px;position:relative;background:linear-gradient(145deg,rgba(73,221,255,.22),rgba(111,140,255,.12));border:1px solid rgba(73,221,255,.28);box-shadow:0 0 34px rgba(73,221,255,.13)}
+.logo:before{content:"";position:absolute;left:12px;top:9px;width:15px;height:22px;border:2px solid var(--cyan);border-radius:4px}
+.logo:after{content:"";position:absolute;right:9px;top:16px;width:3px;height:8px;border-radius:2px;background:var(--cyan)}
+.brand strong{display:block;font-size:15px;letter-spacing:.02em}.brand span{color:var(--muted);font-size:11px}
+.top-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.pill,.mode-btn,.ghost,.primary,.scenario-btn{
+  border:1px solid var(--line2);background:rgba(12,24,42,.72);color:var(--text);border-radius:999px;padding:9px 12px;transition:.2s ease
+}
+.pill{font-size:11px;color:#b9c8dc}.pill .live{width:7px;height:7px;border-radius:50%;display:inline-block;background:var(--green);box-shadow:0 0 12px var(--green);margin-right:6px}
+.mode-btn,.ghost,.primary,.scenario-btn{cursor:pointer}
+.mode-btn:hover,.ghost:hover,.scenario-btn:hover{border-color:rgba(73,221,255,.5);transform:translateY(-1px)}
+.mode-btn.active{background:rgba(73,221,255,.12);border-color:rgba(73,221,255,.45);color:#d9fbff}
+.primary{border-radius:12px;background:linear-gradient(135deg,#35d8ff,#7690ff);color:#031019;border:none;font-weight:800;box-shadow:0 12px 30px rgba(73,221,255,.17)}
+.primary:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.ghost{border-radius:12px}
+.hero{display:grid;grid-template-columns:1.35fr .9fr;gap:18px;margin-bottom:18px}
+.hero-main,.hero-side,.card{
+  background:linear-gradient(180deg,rgba(17,32,55,.78),rgba(8,17,31,.84));
+  border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(18px)
+}
+.hero-main{padding:32px;position:relative;overflow:hidden;min-height:320px}
+.hero-main:after{content:"";position:absolute;width:320px;height:320px;border-radius:50%;right:-120px;top:-150px;background:radial-gradient(circle,rgba(73,221,255,.18),transparent 65%)}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#a9c8df;border:1px solid var(--line2);background:rgba(5,14,27,.45);padding:7px 10px;border-radius:999px}
+.eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+h1{font-size:clamp(36px,5vw,68px);line-height:.98;letter-spacing:-.045em;margin:18px 0 14px;max-width:850px}
+.gradient{background:linear-gradient(100deg,#fff 15%,#7beaff 55%,#9aa9ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:15px;color:#aebed2;max-width:760px;margin:0 0 23px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:2}
+.hero-strip{display:flex;gap:22px;flex-wrap:wrap;margin-top:28px;border-top:1px solid var(--line);padding-top:18px}
+.hero-stat strong{font-size:22px;display:block}.hero-stat span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.hero-side{padding:20px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.section-head h2,.section-head h3{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.12em}.section-head span{font-size:10px;color:var(--muted)}
+.twin{position:relative;min-height:244px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#06101d,#081523);overflow:hidden;padding:18px;perspective:900px}
+.twin:before{content:"";position:absolute;inset:0;background:linear-gradient(transparent 94%,rgba(73,221,255,.06) 95%),linear-gradient(90deg,transparent 94%,rgba(73,221,255,.05) 95%);background-size:30px 30px;transform:perspective(600px) rotateX(62deg) translateY(90px) scale(1.5);transform-origin:center bottom}
+.room{position:relative;height:200px;display:flex;align-items:flex-end;justify-content:center;gap:10px;transform:rotateX(5deg) rotateY(-7deg)}
+.twin-rack{width:55px;height:165px;border-radius:8px 8px 5px 5px;background:linear-gradient(90deg,#13243a,#1e3552 45%,#0d1d31);border:1px solid rgba(139,180,226,.2);padding:7px 5px;display:grid;grid-template-rows:repeat(8,1fr);gap:4px;box-shadow:8px 10px 20px rgba(0,0,0,.3);position:relative}
+.twin-rack:before{content:attr(data-label);position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:#8095b2;white-space:nowrap}
+.cell{border-radius:2px;background:linear-gradient(90deg,#164834,#1f6a4b);box-shadow:inset 0 0 0 1px rgba(67,231,164,.2)}
+.twin-rack.focus .cell:nth-child(4),.twin-rack.focus .cell:nth-child(5){background:linear-gradient(90deg,#694414,#9e6415);box-shadow:0 0 10px rgba(255,198,92,.22)}
+.twin-rack.critical .cell:nth-child(4),.twin-rack.critical .cell:nth-child(5){background:linear-gradient(90deg,#6e2228,#a72f3a);box-shadow:0 0 16px rgba(255,101,114,.35)}
+.scan{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);box-shadow:0 0 18px var(--cyan);animation:scan 3.2s linear infinite;opacity:.55}
+@keyframes scan{0%{top:10%}100%{top:90%}}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:9px;color:var(--muted)}.legend b{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:5px}.lg{background:var(--green)}.la{background:var(--amber)}.lr{background:var(--red)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}.card{padding:16px}.span3{grid-column:span 3}.span4{grid-column:span 4}.span5{grid-column:span 5}.span6{grid-column:span 6}.span7{grid-column:span 7}.span8{grid-column:span 8}.span12{grid-column:span 12}
+.kpi .k-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.11em}.kpi .k-value{font-size:30px;line-height:1;font-weight:850;margin:10px 0 5px}.kpi .k-sub{font-size:10px;color:#7187a4}
+.kpi.highlight{border-color:rgba(73,221,255,.25);box-shadow:0 18px 60px rgba(21,110,140,.08)}
+.delta{font-size:9px;padding:3px 6px;border-radius:999px;background:rgba(67,231,164,.1);color:#8af0c3;margin-left:6px;vertical-align:middle}
+.storybar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:18px 0}.storybar .story-title{font-weight:800;margin-right:auto}.storybar select{background:#0b1728;border:1px solid var(--line2);color:var(--text);border-radius:10px;padding:9px 12px}.progress{height:5px;background:#0b1727;border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-top:12px}.progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--amber),var(--red));transition:width .5s ease}
+.site-map{position:relative;height:310px;border-radius:16px;border:1px solid var(--line);background:radial-gradient(circle at 50% 45%,rgba(29,100,137,.1),transparent 46%),#071220;overflow:hidden}
+.site-map svg{width:100%;height:100%}.map-line{stroke:rgba(73,221,255,.16);stroke-width:1.5;stroke-dasharray:5 7;animation:dash 12s linear infinite}@keyframes dash{to{stroke-dashoffset:-120}}
+.site-dot{cursor:pointer}.site-dot circle{fill:#0d2536;stroke:var(--green);stroke-width:2}.site-dot.alert circle{stroke:var(--amber);filter:drop-shadow(0 0 5px var(--amber))}.site-dot text{fill:#cbd8e8;font-size:10px}.site-dot .sub{fill:#6f86a5;font-size:8px}
+.metric-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.metric{padding:11px;border:1px solid var(--line);border-radius:12px;background:rgba(6,15,28,.5)}.metric span{font-size:9px;color:var(--muted);text-transform:uppercase}.metric strong{display:block;font-size:17px;margin-top:3px}
+.factor{display:grid;grid-template-columns:125px 1fr 36px;align-items:center;gap:9px;margin:10px 0;font-size:10px}.bar{height:7px;background:#07111f;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--amber),var(--red));border-radius:99px;transition:width .4s}
+.timeline{max-height:318px;overflow:auto;padding-right:4px}.event{position:relative;padding:9px 8px 9px 24px;border-bottom:1px solid var(--line);font-size:11px}.event:before{content:"";position:absolute;left:7px;top:14px;width:7px;height:7px;border-radius:50%;background:#4b627e}.event.warn:before{background:var(--amber);box-shadow:0 0 9px rgba(255,198,92,.6)}.event.crit:before{background:var(--red);box-shadow:0 0 10px rgba(255,101,114,.6)}.event.good:before{background:var(--green)}.event small{display:block;color:#6f84a0;margin-top:2px}
+.chart{height:250px;border:1px solid var(--line);border-radius:14px;background:#07111f;overflow:hidden}.chart svg{width:100%;height:100%}
+.predict-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.asset{border:1px solid var(--line);border-radius:13px;padding:12px;background:rgba(6,15,28,.48)}.asset-head{display:flex;justify-content:space-between;gap:8px}.asset .score{font-size:24px;font-weight:850}.health{height:6px;background:#08111f;border-radius:99px;margin:9px 0;overflow:hidden}.health i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--cyan))}.asset.warn .health i{background:linear-gradient(90deg,var(--amber),var(--red))}.asset p{font-size:10px;color:var(--muted);margin:5px 0 0}
+.impact{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.impact-item{padding:13px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,rgba(73,221,255,.04),rgba(5,13,25,.4))}.impact-item strong{font-size:23px;display:block}.impact-item span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.arch{display:flex;align-items:stretch;justify-content:center;gap:8px;flex-wrap:wrap}.node{flex:1;min-width:150px;max-width:220px;padding:14px;border-radius:14px;border:1px solid var(--line);background:rgba(6,16,30,.52);text-align:center;position:relative}.node strong{display:block;margin-bottom:4px;font-size:11px}.node span{font-size:9px;color:var(--muted)}.node:not(:last-child):after{content:"→";position:absolute;right:-13px;top:50%;transform:translateY(-50%);color:#49617e}.node.ai{border-color:rgba(73,221,255,.32);box-shadow:0 0 28px rgba(73,221,255,.07)}
+.compliance{display:flex;gap:8px;flex-wrap:wrap}.chip{padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#081522;font-size:10px;color:#b7c4d5}.chip b{color:#dff8ff}.chip:before{content:"✓";color:var(--green);margin-right:6px}
+.callout{border:1px solid rgba(255,198,92,.25);background:rgba(255,198,92,.06);color:#ddc997;border-radius:13px;padding:11px 12px;font-size:10px}
+.big-message{font-size:26px;line-height:1.16;font-weight:800;letter-spacing:-.025em;max-width:680px}.big-message em{font-style:normal;color:var(--cyan)}
+.mode-engineering .executive-only{display:none!important}
+.mode-executive .engineering-only{display:none!important}
+.footer{margin-top:18px;padding:14px 2px;color:#6d829f;font-size:10px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.modal{position:fixed;inset:0;background:rgba(1,6,14,.78);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:18px;z-index:20}.modal.show{display:flex}.modal-card{width:min(720px,100%);max-height:85vh;overflow:auto;background:#0b1728;border:1px solid var(--line2);border-radius:20px;padding:22px;box-shadow:var(--shadow)}.modal-card h2{margin-top:0}.report{font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;color:#c8d5e5;white-space:pre-wrap;background:#07111f;border:1px solid var(--line);padding:14px;border-radius:12px}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+@media(max-width:1120px){.hero{grid-template-columns:1fr}.span3{grid-column:span 6}.span4,.span5,.span7,.span8{grid-column:span 6}.predict-grid{grid-template-columns:1fr 1fr}.impact{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.shell{padding:14px}.topbar{align-items:flex-start;flex-direction:column}.hero-main{padding:23px}.hero-strip{gap:14px}.grid{grid-template-columns:1fr}.span3,.span4,.span5,.span6,.span7,.span8,.span12{grid-column:1}.predict-grid,.impact,.metric-grid{grid-template-columns:1fr}.room{gap:6px}.twin-rack{width:44px}.factor{grid-template-columns:105px 1fr 34px}.node:not(:last-child):after{display:none}}
 </style>
 </head>
-<body><div class="wrap">
-<header><div><h1>Battery Safety Operations Center</h1><p>AI-assisted early warning · Telecom / data-center reference deployment · Bangladesh</p></div><div class="badges"><span class="badge"><i class="dot"></i><span id="api">Checking API</span></span><span class="badge">Recommendation-only safety mode</span></div></header>
-<div class="grid">
-<div class="card kpi"><div class="label">Fleet safety state</div><div class="value" id="state" style="color:var(--g)">NORMAL</div><div class="sub">Worst state across monitored racks</div></div>
-<div class="card kpi"><div class="label">Racks monitored</div><div class="value">8</div><div class="sub">LFP + VRLA reference fleet</div></div>
-<div class="card kpi"><div class="label">Highest AI risk</div><div class="value" id="max">0.08</div><div class="sub">Transparent multi-sensor fusion</div></div>
-<div class="card kpi"><div class="label">Active incidents</div><div class="value" id="inc">0</div><div class="sub">Warning / critical requiring review</div></div>
-<div class="card main"><div class="title"><b>Battery fleet</b><div><button class="primary" onclick="inject()">Inject test anomaly</button> <button onclick="reset()">Reset</button></div></div><div id="racks" class="racks"></div><div class="notice"><b>Safety boundary:</b> AI detects and explains early-warning signals. It does not control contactors, UPS shutdown, suppression or ventilation. Validated BMS/UPS/PLC/fire systems remain authoritative.</div></div>
-<div class="card side"><div class="title"><b>Incident timeline</b><span>operator view</span></div><div id="events" class="events"></div></div>
-<div class="card main"><div class="title"><b>Thermal / risk trend</b><span>UPS-A-R03 · 60-point window</span></div><div class="chart"><svg id="chart" viewBox="0 0 720 205" preserveAspectRatio="none"></svg></div></div>
-<div class="card side"><div class="title"><b>Risk contribution</b><span>latest assessment</span></div><div id="factors"></div></div>
-<div class="card wide"><div class="title"><b>Industrial architecture</b><span>fail-safe / advisory-first</span></div><div class="arch"><div class="node"><strong>BMS · UPS · Sensors</strong>temperature · gas · voltage · smoke</div><div class="arrow">→</div><div class="node"><strong>Edge Gateway</strong>MQTT TLS · SNMPv3 · OPC UA</div><div class="arrow">→</div><div class="node"><strong>AI Risk Engine</strong>early-warning + explainability</div><div class="arrow">→</div><div class="node"><strong>NOC · CMMS · SIEM</strong>human-reviewed action</div></div><div class="notice">For an actual Grameenphone pilot, run this service in shadow mode first and calibrate it on sanitized GP battery/UPS history. Manufacturer limits, site procedures and Bangladesh fire/building requirements must be validated before operational use.</div></div>
-</div><div class="foot">LFP / NMC / VRLA · standards-informed but not certified · no confidential Grameenphone information included.</div>
+<body class="mode-executive">
+<div class="shell">
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo"></div>
+      <div><strong>BatteryGuard AI</strong><span>Mission-Critical Battery Safety Intelligence</span></div>
+    </div>
+    <div class="top-actions">
+      <span class="pill"><i class="live"></i><span id="apiStatus">Standalone Demo Ready</span></span>
+      <button class="mode-btn active" id="execBtn" onclick="setMode('executive')">Executive View</button>
+      <button class="mode-btn" id="engBtn" onclick="setMode('engineering')">NOC / Engineering</button>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-main">
+      <span class="eyebrow"><i></i> AI safety intelligence for telecom & data centers</span>
+      <h1><span class="gradient">Predict. Prevent. Protect.</span><br>Before a battery event becomes downtime.</h1>
+      <p class="lead">BatteryGuard AI correlates weak signals across thermal, gas, voltage and health telemetry to surface emerging risk earlier—while keeping the validated BMS, UPS, PLC and fire systems fully authoritative.</p>
+      <div class="hero-actions">
+        <button class="primary" onclick="startStory()">▶ Run Guided Incident Story</button>
+        <button class="ghost" onclick="scrollToSection('fleet')">Explore Live Fleet</button>
+        <button class="ghost" onclick="openReport()">Generate Incident Report</button>
+      </div>
+      <div class="hero-strip">
+        <div class="hero-stat"><strong id="heroSites">4</strong><span>Simulated sites</span></div>
+        <div class="hero-stat"><strong>128</strong><span>Monitored battery strings</span></div>
+        <div class="hero-stat"><strong id="heroLead">—</strong><span>Illustrative early-warning lead</span></div>
+        <div class="hero-stat"><strong>24/7</strong><span>AI-assisted vigilance</span></div>
+      </div>
+    </div>
+    <div class="hero-side">
+      <div class="section-head"><h2>Live Digital Twin</h2><span id="twinState">ALL SYSTEMS NOMINAL</span></div>
+      <div class="twin">
+        <div class="scan"></div>
+        <div class="room" id="room">
+          <div class="twin-rack" data-label="UPS-A1"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div>
+          <div class="twin-rack" id="focusRack" data-label="UPS-A2"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div>
+          <div class="twin-rack" data-label="UPS-A3"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div>
+          <div class="twin-rack" data-label="DC-48V"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div>
+          <div class="twin-rack" data-label="UPS-B1"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div>
+        </div>
+      </div>
+      <div class="legend"><span><b class="lg"></b>Normal</span><span><b class="la"></b>Advisory</span><span><b class="lr"></b>Critical</span><span>Illustrative digital twin</span></div>
+    </div>
+  </section>
+
+  <div class="storybar card">
+    <div><div class="story-title">Interactive Safety Scenario</div><div style="font-size:10px;color:var(--muted)">Choose a fault or let the guided story narrate it automatically.</div></div>
+    <select id="scenario">
+      <option value="thermal">Thermal Runaway Precursor</option>
+      <option value="gas">Hydrogen / Off-Gas Rise</option>
+      <option value="imbalance">Cell Voltage Imbalance</option>
+      <option value="cooling">Cooling Failure</option>
+      <option value="bms">BMS Alarm Escalation</option>
+      <option value="sensor">Sensor Degradation</option>
+    </select>
+    <button class="scenario-btn" onclick="runScenario()">Simulate</button>
+    <button class="scenario-btn" onclick="resetDemo()">Reset</button>
+    <div style="width:100%"><div class="progress"><i id="storyProgress"></i></div></div>
+  </div>
+
+  <section class="grid executive-only">
+    <div class="card span3 kpi highlight"><div class="k-label">Fleet safety posture</div><div class="k-value" id="fleetState" style="color:var(--green)">NORMAL</div><div class="k-sub">Worst simulated state across the monitored estate</div></div>
+    <div class="card span3 kpi"><div class="k-label">Critical risks</div><div class="k-value" id="criticalCount">0</div><div class="k-sub">Events requiring immediate operator verification</div></div>
+    <div class="card span3 kpi"><div class="k-label">AI risk visibility</div><div class="k-value" id="riskVisibility">0.08</div><div class="k-sub">Highest current explainable risk score</div></div>
+    <div class="card span3 kpi"><div class="k-label">Predictive maintenance</div><div class="k-value">11<span class="delta">prioritized</span></div><div class="k-sub">Illustrative assets ranked for inspection</div></div>
+
+    <div class="card span7">
+      <div class="section-head"><h3>Bangladesh Telecom Fleet — Illustrative</h3><span>multi-site command view</span></div>
+      <div class="site-map">
+        <svg viewBox="0 0 720 310" aria-label="Illustrative Bangladesh telecom site network">
+          <path d="M350 34 C390 52 421 83 433 116 C447 151 434 184 447 211 C461 240 443 275 407 287 C371 299 337 276 318 254 C295 228 268 220 254 191 C239 158 258 131 275 111 C294 87 308 54 350 34Z" fill="rgba(38,83,118,.12)" stroke="rgba(107,159,199,.25)" stroke-width="1.3"/>
+          <line class="map-line" x1="362" y1="151" x2="300" y2="112"/><line class="map-line" x1="362" y1="151" x2="427" y2="94"/><line class="map-line" x1="362" y1="151" x2="402" y2="238"/>
+          <g class="site-dot" transform="translate(362 151)"><circle r="9"/><circle r="18" fill="none" opacity=".17"/><text x="14" y="-2">Dhaka Core</text><text class="sub" x="14" y="10">32 strings · normal</text></g>
+          <g class="site-dot" id="siteSylhet" transform="translate(427 94)"><circle r="8"/><text x="13" y="-2">Sylhet Reference</text><text class="sub" x="13" y="10">40 strings · nominal</text></g>
+          <g class="site-dot" transform="translate(300 112)"><circle r="8"/><text x="-90" y="-2">Rajshahi</text><text class="sub" x="-90" y="10">24 strings · normal</text></g>
+          <g class="site-dot" transform="translate(402 238)"><circle r="8"/><text x="13" y="-2">Chattogram</text><text class="sub" x="13" y="10">32 strings · normal</text></g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="card span5">
+      <div class="section-head"><h3>Why the AI escalated</h3><span>explainable risk fusion</span></div>
+      <div id="execFactors"></div>
+      <div class="callout" id="aiNarrative">No abnormal pattern detected. The system is continuously correlating temperature behavior, gas concentration, voltage deviation and battery health.</div>
+    </div>
+
+    <div class="card span6">
+      <div class="section-head"><h3>Illustrative Business Impact</h3><span>simulation values — not field claims</span></div>
+      <div class="impact">
+        <div class="impact-item"><strong id="impactLead">—</strong><span>Early-warning lead</span></div>
+        <div class="impact-item"><strong id="impactExposure">$0</strong><span>Modeled exposure surfaced</span></div>
+        <div class="impact-item"><strong id="impactAvailability">99.999%</strong><span>Availability context</span></div>
+        <div class="impact-item"><strong id="impactMTTR">—</strong><span>Decision window</span></div>
+      </div>
+      <div class="callout" style="margin-top:10px">Financial, lead-time and availability figures shown in this demo are illustrative scenario outputs. Real ROI must be calculated from the client's asset values, downtime economics and validated pilot performance.</div>
+    </div>
+
+    <div class="card span6">
+      <div class="section-head"><h3>Executive Incident Story</h3><span>AI → operator → containment</span></div>
+      <div class="timeline" id="execTimeline"></div>
+    </div>
+
+    <div class="card span7">
+      <div class="section-head"><h3>Predictive Maintenance Priorities</h3><span>illustrative asset health ranking</span></div>
+      <div class="predict-grid">
+        <div class="asset"><div class="asset-head"><div><b>UPS-A-R01</b><p>LFP · Dhaka Core</p></div><div class="score">94</div></div><div class="health"><i style="width:94%"></i></div><p>Healthy · next inspection per schedule</p></div>
+        <div class="asset warn"><div class="asset-head"><div><b>UPS-A-R03</b><p>LFP · Sylhet Reference</p></div><div class="score" id="assetHealth">82</div></div><div class="health"><i id="assetBar" style="width:82%"></i></div><p id="assetAdvice">Watch-list · voltage spread trending upward</p></div>
+        <div class="asset"><div class="asset-head"><div><b>DC48-R07</b><p>VRLA · Chattogram</p></div><div class="score">88</div></div><div class="health"><i style="width:88%"></i></div><p>Plan resistance verification at next window</p></div>
+      </div>
+    </div>
+
+    <div class="card span5">
+      <div class="section-head"><h3>Designed for Enterprise Adoption</h3><span>readiness architecture</span></div>
+      <div class="big-message">Add intelligence <em>above</em> existing protection—not instead of it.</div>
+      <p style="color:var(--muted);font-size:11px">Shadow-mode deployment, read-only telemetry integration, human-reviewed escalation, auditability and progressive model calibration are built into the implementation path.</p>
+      <div class="compliance">
+        <span class="chip"><b>IEC 62619</b> reference</span><span class="chip"><b>IEC 63056</b> reference</span><span class="chip"><b>UL 9540A</b> evidence aware</span><span class="chip"><b>NFPA 855</b> design reference</span><span class="chip"><b>IEEE 1188</b> VRLA</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid engineering-only" id="fleet">
+    <div class="card span3 kpi"><div class="k-label">Fleet state</div><div class="k-value" id="engState">NORMAL</div><div class="k-sub">Deterministic state classification</div></div>
+    <div class="card span3 kpi"><div class="k-label">Max cell temperature</div><div class="k-value" id="maxTemp">28.4°C</div><div class="k-sub">Simulated UPS-A-R03 telemetry</div></div>
+    <div class="card span3 kpi"><div class="k-label">H₂ / off-gas</div><div class="k-value" id="gasVal">8 ppm</div><div class="k-sub">Scenario-dependent sensor feed</div></div>
+    <div class="card span3 kpi"><div class="k-label">Voltage deviation</div><div class="k-value" id="voltDev">0.4%</div><div class="k-sub">Expected vs observed pack voltage</div></div>
+
+    <div class="card span8">
+      <div class="section-head"><h3>Thermal + AI Risk Trend</h3><span>60-point simulated window</span></div>
+      <div class="chart"><svg id="chart" viewBox="0 0 860 250" preserveAspectRatio="none"></svg></div>
+    </div>
+    <div class="card span4">
+      <div class="section-head"><h3>Risk Contributions</h3><span>latest frame</span></div>
+      <div id="engFactors"></div>
+    </div>
+
+    <div class="card span7">
+      <div class="section-head"><h3>Rack Fleet</h3><span>LFP / NMC / VRLA</span></div>
+      <div id="rackTable" style="display:grid;gap:7px"></div>
+    </div>
+    <div class="card span5">
+      <div class="section-head"><h3>Operator Event Timeline</h3><span>simulation audit trail</span></div>
+      <div class="timeline" id="engTimeline"></div>
+    </div>
+
+    <div class="card span12">
+      <div class="section-head"><h3>Fail-Safe Industrial Architecture</h3><span>AI is recommendation-only</span></div>
+      <div class="arch">
+        <div class="node"><strong>BMS / UPS / Fire Sensors</strong><span>temperature · gas · voltage · smoke · alarms</span></div>
+        <div class="node"><strong>Secure Edge Gateway</strong><span>MQTT TLS · SNMPv3 · OPC UA · read-only Modbus</span></div>
+        <div class="node ai"><strong>BatteryGuard AI</strong><span>validation · risk fusion · anomaly intelligence · audit</span></div>
+        <div class="node"><strong>NOC / SIEM / CMMS</strong><span>human verification · maintenance · incident workflow</span></div>
+        <div class="node"><strong>Authoritative Safety Layer</strong><span>BMS · PLC · UPS · fire system performs physical action</span></div>
+      </div>
+      <div class="callout" style="margin-top:12px"><b>Safety boundary:</b> this demo never authorizes physical control. Emergency isolation, suppression, ventilation and UPS actions remain under validated site systems and approved procedures.</div>
+    </div>
+  </section>
+
+  <div class="footer"><span>BatteryGuard AI · Bangladesh telecom/data-center reference demo</span><span>Simulated telemetry · standards-informed · not certified · not an official Grameenphone product</span></div>
 </div>
+
+<div class="modal" id="reportModal">
+  <div class="modal-card">
+    <h2>Incident Intelligence Report</h2>
+    <p style="color:var(--muted)">Generated from the current simulated scenario. All operational and financial values are illustrative.</p>
+    <div class="report" id="reportText"></div>
+    <div class="modal-actions"><button class="ghost" onclick="closeReport()">Close</button><button class="primary" onclick="downloadReport()">Download Report</button></div>
+  </div>
+</div>
+
 <script>
-const base=[['UPS-A-R01','LFP',27.1,.04],['UPS-A-R02','LFP',28,.05],['UPS-A-R03','LFP',28.4,.08],['UPS-A-R04','LFP',27.6,.05],['DC-48-R01','VRLA',26.5,.06],['DC-48-R02','VRLA',26.8,.05],['DC-48-R03','VRLA',27.2,.07],['DC-48-R04','VRLA',26.3,.04]];
-let racks=[],timer=null,step=0,temps=[],risks=[];const factors={temperature:.18,temperature_spread:.10,temperature_rate:.08,hydrogen:.06,carbon_monoxide:.04,voltage_deviation:.12,internal_resistance:.09};
-function event(t,c=''){const e=document.createElement('div');e.className='event '+c;e.innerHTML=t+'<small>'+new Date().toLocaleTimeString()+' · simulation/audit event</small>';document.getElementById('events').prepend(e)}
-function render(){document.getElementById('racks').innerHTML=racks.map(x=>'<div class="rack '+x.s+'"><div class="name">'+x.id+'</div><div class="chem">'+x.c+' · '+x.s.toUpperCase()+'</div><div class="metrics"><span>'+x.t.toFixed(1)+'°C</span><span class="risk">RISK '+x.r.toFixed(2)+'</span></div></div>').join('');let m=Math.max(...racks.map(x=>x.r)),s=racks.some(x=>x.s==='critical')?'CRITICAL':racks.some(x=>x.s==='warning')?'WARNING':racks.some(x=>x.s==='advisory')?'ADVISORY':'NORMAL';document.getElementById('max').textContent=m.toFixed(2);document.getElementById('state').textContent=s;document.getElementById('state').style.color=s==='NORMAL'?'var(--g)':s==='ADVISORY'?'var(--a)':'var(--r)';document.getElementById('inc').textContent=racks.filter(x=>x.s==='warning'||x.s==='critical').length;document.getElementById('factors').innerHTML=Object.entries(factors).map(([k,v])=>'<div class="f"><span>'+k.replaceAll('_',' ')+'</span><div class="bar"><div class="fill" style="width:'+Math.round(v*100)+'%"></div></div><b>'+v.toFixed(2)+'</b></div>').join('');chart()}
-function chart(){const w=720,h=205;function p(a,min,max){return a.map((v,i)=>(i?'L':'M')+' '+(i/(a.length-1)*w)+' '+(h-15-(v-min)/(max-min)*(h-30))).join(' ')}document.getElementById('chart').innerHTML='<line x1="0" y1="45" x2="720" y2="45" stroke="#ffbe4a" stroke-dasharray="5 7" opacity=".45"/><path d="'+p(temps,20,70)+'" fill="none" stroke="#31c3e5" stroke-width="2"/><path d="'+p(risks,0,1)+'" fill="none" stroke="#ffbe4a" stroke-width="2"/>'}
-function reset(){if(timer)clearInterval(timer);timer=null;racks=base.map(x=>({id:x[0],c:x[1],t:x[2],r:x[3],s:'normal'}));Object.assign(factors,{temperature:.18,temperature_spread:.10,temperature_rate:.08,hydrogen:.06,carbon_monoxide:.04,voltage_deviation:.12,internal_resistance:.09});temps=Array.from({length:55},(_,i)=>26+Math.sin(i/8)*.8+Math.random()*.3);risks=temps.map((_,i)=>.04+Math.max(0,Math.sin(i/11))*.04);document.getElementById('events').innerHTML='';event('System initialized — all reference racks nominal');render()}
-function inject(){if(timer)return;step=0;event('Test anomaly injected on UPS-A-R03','warn');timer=setInterval(()=>{step++;let x=racks[2];x.t=Math.min(61,x.t+1.3);x.r=Math.min(.96,x.r+.06);if(step===3){x.s='advisory';factors.voltage_deviation=.58;factors.temperature_rate=.63;event('Voltage deviation + fast temperature rise detected','warn')}if(step===6){x.s='warning';factors.temperature=.72;factors.hydrogen=.61;factors.temperature_spread=.67;event('Multi-sensor fusion escalated to WARNING','warn')}if(step===9){x.s='critical';factors.temperature=.91;factors.hydrogen=.82;factors.carbon_monoxide=.72;event('CRITICAL — verify authoritative BMS/fire systems and site procedure','crit')}temps.push(x.t);risks.push(x.r);if(temps.length>60){temps.shift();risks.shift()}render();if(step>=10){clearInterval(timer);timer=null}},650)}
-fetch('/api/v1/config',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()).then(x=>document.getElementById('api').textContent='Live API '+x.version).catch(()=>document.getElementById('api').textContent='Standalone simulation');reset();
-</script></body></html>
+const BASE_RACKS=[
+  {id:'UPS-A-R01',chem:'LFP',site:'Dhaka Core',temp:27.1,risk:.04,state:'normal'},
+  {id:'UPS-A-R02',chem:'LFP',site:'Dhaka Core',temp:27.8,risk:.05,state:'normal'},
+  {id:'UPS-A-R03',chem:'LFP',site:'Sylhet Reference',temp:28.4,risk:.08,state:'normal'},
+  {id:'UPS-A-R04',chem:'NMC',site:'Sylhet Reference',temp:27.6,risk:.05,state:'normal'},
+  {id:'DC48-R05',chem:'VRLA',site:'Rajshahi',temp:26.5,risk:.06,state:'normal'},
+  {id:'DC48-R06',chem:'VRLA',site:'Rajshahi',temp:26.8,risk:.05,state:'normal'},
+  {id:'DC48-R07',chem:'VRLA',site:'Chattogram',temp:27.2,risk:.07,state:'normal'},
+  {id:'UPS-B-R08',chem:'LFP',site:'Chattogram',temp:26.3,risk:.04,state:'normal'}
+];
+const BASE_FACTORS={temperature:.13,temperature_spread:.09,temperature_rate:.07,hydrogen:.04,carbon_monoxide:.03,voltage_deviation:.10,internal_resistance:.08};
+const SCENARIOS={
+  thermal:{label:'Thermal Runaway Precursor',lead:'27 min',exposure:'$420k',decision:'18 min',steps:[
+    ['AI notices a subtle voltage spread + temperature-rate change before fixed thermal thresholds.','warn'],
+    ['Thermal, voltage and gas signals correlate across UPS-A-R03; confidence increases.','warn'],
+    ['Risk reaches WARNING. Operator verification and targeted inspection are recommended.','warn'],
+    ['Simulated condition progresses; authoritative BMS/fire systems must be verified immediately.','crit'],
+    ['Scenario contained after operator intervention; incident data retained for review.','good']
+  ]},
+  gas:{label:'Hydrogen / Off-Gas Rise',lead:'21 min',exposure:'$310k',decision:'14 min',steps:[
+    ['Gas trend departs from the rack baseline while temperature remains near normal.','warn'],
+    ['AI correlates off-gas rise with charger and voltage behavior.','warn'],
+    ['WARNING generated before a high fixed gas threshold is reached.','warn'],
+    ['Ventilation/fire-system status requires operator verification under site procedure.','crit'],
+    ['Simulated gas trend stabilizes after intervention.','good']
+  ]},
+  imbalance:{label:'Cell Voltage Imbalance',lead:'34 min',exposure:'$180k',decision:'25 min',steps:[
+    ['Small voltage deviation appears across one battery string.','warn'],
+    ['Deviation persists and internal-resistance trend adds corroborating evidence.','warn'],
+    ['Predictive-maintenance priority increases before a hard BMS trip.','warn'],
+    ['Operator schedules inspection/replacement without emergency shutdown.','good'],
+    ['Scenario closed as a maintenance event.','good']
+  ]},
+  cooling:{label:'Cooling Failure',lead:'16 min',exposure:'$560k',decision:'11 min',steps:[
+    ['Ambient temperature begins rising across multiple racks.','warn'],
+    ['Rack temperature-rate becomes correlated with cooling-zone behavior.','warn'],
+    ['Fleet-level WARNING raised; affected zone isolated for operator review.','warn'],
+    ['Critical thermal progression avoided in the simulated story.','good'],
+    ['Cooling root cause recorded for facilities follow-up.','good']
+  ]},
+  bms:{label:'BMS Alarm Escalation',lead:'Immediate',exposure:'$650k',decision:'Immediate',steps:[
+    ['Upstream BMS alarm is received and treated as authoritative evidence.','crit'],
+    ['AI risk is forced to CRITICAL; no autonomous control command is issued.','crit'],
+    ['Operator follows approved BMS/UPS/fire procedure.','crit'],
+    ['NOC incident workflow captures acknowledgement and response.','warn'],
+    ['Scenario retained for audit and model review.','good']
+  ]},
+  sensor:{label:'Sensor Degradation',lead:'N/A',exposure:'$95k',decision:'Maintenance',steps:[
+    ['Telemetry quality monitor detects a drifting temperature sensor.','warn'],
+    ['Cross-sensor disagreement reduces AI confidence instead of hiding uncertainty.','warn'],
+    ['Sensor maintenance ticket recommended; safety controls remain independent.','warn'],
+    ['Redundant telemetry keeps the rack observable during replacement.','good'],
+    ['Sensor trust score restored after verification.','good']
+  ]}
+};
+let racks=[],factors={},temps=[],risks=[],storyTimer=null,storyStep=0,currentScenario='thermal',gas=8,volt=.4;
+function $(id){return document.getElementById(id)}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function setMode(mode){
+  document.body.className='mode-'+mode;
+  $('execBtn').classList.toggle('active',mode==='executive');$('engBtn').classList.toggle('active',mode==='engineering');
+}
+function scrollToSection(id){setMode('engineering');setTimeout(()=>$((id)).scrollIntoView({behavior:'smooth',block:'start'}),50)}
+function pushEvent(text,type=''){
+  for(const id of ['execTimeline','engTimeline']){
+    const host=$(id);const e=document.createElement('div');e.className='event '+type;
+    e.innerHTML=text+'<small>'+new Date().toLocaleTimeString()+' · simulated audit event</small>';host.prepend(e)
+  }
+}
+function factorRows(target){
+  $(target).innerHTML=Object.entries(factors).map(([k,v])=>'<div class="factor"><span>'+k.replaceAll('_',' ')+'</span><div class="bar"><i style="width:'+Math.round(v*100)+'%"></i></div><b>'+v.toFixed(2)+'</b></div>').join('')
+}
+function renderRackTable(){
+  $('rackTable').innerHTML=racks.map(r=>{
+    const color=r.state==='critical'?'var(--red)':r.state==='warning'?'var(--amber)':r.state==='advisory'?'var(--amber)':'var(--green)';
+    return '<div style="display:grid;grid-template-columns:1.1fr .8fr .8fr .7fr .7fr;gap:8px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:11px;background:rgba(5,14,27,.45);font-size:10px"><b>'+r.id+'</b><span style="color:var(--muted)">'+r.site+'</span><span>'+r.chem+'</span><span>'+r.temp.toFixed(1)+'°C</span><span style="color:'+color+';font-weight:800">'+r.state.toUpperCase()+' · '+r.risk.toFixed(2)+'</span></div>'
+  }).join('')
+}
+function drawChart(){
+  const w=860,h=250,pad=18;
+  const line=(arr,min,max)=>arr.map((v,i)=>(i?'L':'M')+' '+(pad+i/(arr.length-1)*(w-pad*2))+' '+(h-pad-(v-min)/(max-min)*(h-pad*2))).join(' ');
+  $('chart').innerHTML=
+   '<line x1="0" y1="70" x2="'+w+'" y2="70" stroke="#ffc65c" stroke-dasharray="6 8" opacity=".28"/>'+
+   '<text x="12" y="64" fill="#7d90a9" font-size="10">AI attention region</text>'+
+   '<path d="'+line(temps,20,75)+'" fill="none" stroke="#49ddff" stroke-width="2.3"/>'+
+   '<path d="'+line(risks,0,1)+'" fill="none" stroke="#ffc65c" stroke-width="2.3"/>'+
+   '<text x="'+(w-130)+'" y="22" fill="#49ddff" font-size="10">temperature</text><text x="'+(w-65)+'" y="22" fill="#ffc65c" font-size="10">risk</text>'
+}
+function render(){
+  const maxRisk=Math.max(...racks.map(r=>r.risk)),critical=racks.filter(r=>r.state==='critical').length;
+  const warning=racks.filter(r=>r.state==='warning').length;
+  const overall=critical?'CRITICAL':warning?'WARNING':racks.some(r=>r.state==='advisory')?'ADVISORY':'NORMAL';
+  const color=overall==='NORMAL'?'var(--green)':overall==='ADVISORY'?'var(--amber)':'var(--red)';
+  $('fleetState').textContent=overall;$('fleetState').style.color=color;
+  $('engState').textContent=overall;$('engState').style.color=color;
+  $('criticalCount').textContent=critical;$('riskVisibility').textContent=maxRisk.toFixed(2);
+  $('maxTemp').textContent=Math.max(...racks.map(r=>r.temp)).toFixed(1)+'°C';$('gasVal').textContent=Math.round(gas)+' ppm';$('voltDev').textContent=volt.toFixed(1)+'%';
+  factorRows('execFactors');factorRows('engFactors');renderRackTable();drawChart()
+}
+function applyScenarioFrame(step){
+  const r=racks[2],scenario=currentScenario;
+  const level=(step+1)/5;
+  if(scenario==='thermal'){r.temp=28.4+level*34;r.risk=.08+level*.86;gas=8+level*118;volt=.4+level*4.8;factors.temperature=.13+level*.78;factors.temperature_rate=.07+level*.86;factors.temperature_spread=.09+level*.7;factors.hydrogen=.04+level*.75;factors.voltage_deviation=.10+level*.68}
+  if(scenario==='gas'){r.temp=28.4+level*6;r.risk=.08+level*.70;gas=8+level*240;volt=.4+level*1.3;factors.hydrogen=.04+level*.9;factors.carbon_monoxide=.03+level*.74;factors.voltage_deviation=.10+level*.34}
+  if(scenario==='imbalance'){r.temp=28.4+level*3;r.risk=.08+level*.54;gas=8+level*4;volt=.4+level*6.5;factors.voltage_deviation=.10+level*.86;factors.internal_resistance=.08+level*.68}
+  if(scenario==='cooling'){r.temp=28.4+level*25;r.risk=.08+level*.68;gas=8+level*22;volt=.4+level*.6;factors.temperature=.13+level*.73;factors.temperature_rate=.07+level*.72;factors.temperature_spread=.09+level*.45}
+  if(scenario==='bms'){r.temp=31+level*8;r.risk=.9+level*.08;gas=18+level*30;volt=2+level*2;factors.temperature=.42;factors.voltage_deviation=.54;factors.hydrogen=.38}
+  if(scenario==='sensor'){r.temp=28.4+level*2;r.risk=.12+level*.30;gas=8;volt=.5;factors.temperature=.19;factors.temperature_rate=.12;factors.voltage_deviation=.16;factors.internal_resistance=.21}
+  r.risk=clamp(r.risk,0,1);r.state=r.risk>.84?'critical':r.risk>.59?'warning':r.risk>.31?'advisory':'normal';
+  if(scenario==='bms')r.state='critical';
+  temps.push(r.temp);risks.push(r.risk);if(temps.length>60){temps.shift();risks.shift()}
+  $('storyProgress').style.width=((step+1)*20)+'%';
+  const cfg=SCENARIOS[scenario];$('heroLead').textContent=step>=1?cfg.lead:'—';$('impactLead').textContent=step>=1?cfg.lead:'—';$('impactExposure').textContent=step>=1?cfg.exposure:'$0';$('impactMTTR').textContent=step>=1?cfg.decision:'—';
+  $('twinState').textContent=r.state==='critical'?'CRITICAL RISK — VERIFY SAFETY SYSTEMS':r.state==='warning'?'WARNING — OPERATOR VERIFICATION':'AI MONITORING ACTIVE';
+  $('focusRack').classList.toggle('focus',r.state==='advisory'||r.state==='warning');$('focusRack').classList.toggle('critical',r.state==='critical');$('siteSylhet').classList.toggle('alert',r.state!=='normal');
+  $('assetHealth').textContent=Math.round(82-level*22);$('assetBar').style.width=Math.round(82-level*22)+'%';$('assetAdvice').textContent=level>.6?'Priority inspection recommended after incident verification':'Watch-list · anomaly evidence increasing';
+  $('aiNarrative').textContent=cfg.steps[step][0]+' AI remains advisory; the validated site protection layer is authoritative.';
+  render()
+}
+function runScenario(){
+  if(storyTimer)clearInterval(storyTimer);currentScenario=$('scenario').value;resetDemo(false);currentScenario=$('scenario').value;
+  const cfg=SCENARIOS[currentScenario];pushEvent('Scenario started: '+cfg.label,'warn');storyStep=0;
+  applyScenarioFrame(0);pushEvent(cfg.steps[0][0],cfg.steps[0][1]);storyStep=1;
+  storyTimer=setInterval(()=>{if(storyStep>=cfg.steps.length){clearInterval(storyTimer);storyTimer=null;return}applyScenarioFrame(storyStep);pushEvent(cfg.steps[storyStep][0],cfg.steps[storyStep][1]);storyStep++},1400)
+}
+function startStory(){setMode('executive');$('scenario').value='thermal';currentScenario='thermal';runScenario()}
+function resetDemo(clearTimeline=true){
+  if(storyTimer)clearInterval(storyTimer);storyTimer=null;storyStep=0;racks=BASE_RACKS.map(r=>({...r}));factors={...BASE_FACTORS};gas=8;volt=.4;
+  temps=Array.from({length:54},(_,i)=>26.8+Math.sin(i/7)*.7+(i%3)*.08);risks=temps.map((_,i)=>.045+Math.max(0,Math.sin(i/9))*.035);
+  $('storyProgress').style.width='0';$('heroLead').textContent='—';$('impactLead').textContent='—';$('impactExposure').textContent='$0';$('impactMTTR').textContent='—';
+  $('twinState').textContent='ALL SYSTEMS NOMINAL';$('focusRack').classList.remove('focus','critical');$('siteSylhet').classList.remove('alert');
+  $('assetHealth').textContent='82';$('assetBar').style.width='82%';$('assetAdvice').textContent='Watch-list · voltage spread trending upward';
+  $('aiNarrative').textContent='No abnormal pattern detected. The system is continuously correlating temperature behavior, gas concentration, voltage deviation and battery health.';
+  if(clearTimeline){$('execTimeline').innerHTML='';$('engTimeline').innerHTML='';pushEvent('System initialized — all simulated sites nominal','good')}
+  render()
+}
+function openReport(){
+  const r=racks[2],cfg=SCENARIOS[currentScenario];
+  const text=
+`BATTERYGUARD AI — SIMULATED INCIDENT INTELLIGENCE REPORT
+========================================================
+Scenario: ${cfg.label}
+Site: ${r.site}
+Asset: ${r.id} (${r.chem})
+Current state: ${r.state.toUpperCase()}
+AI risk score: ${r.risk.toFixed(2)}
+Max temperature: ${r.temp.toFixed(1)} °C
+Hydrogen/off-gas indicator: ${Math.round(gas)} ppm
+Voltage deviation: ${volt.toFixed(1)} %
+
+Top risk factors:
+${Object.entries(factors).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,v])=>' - '+k.replaceAll('_',' ')+': '+v.toFixed(2)).join('\n')}
+
+Illustrative early-warning lead: ${r.state==='normal'?'N/A':cfg.lead}
+Illustrative modeled exposure surfaced: ${r.state==='normal'?'N/A':cfg.exposure}
+
+Recommended operating posture:
+ - Verify readings against authoritative BMS / UPS / fire systems.
+ - Follow the approved site emergency or maintenance procedure.
+ - Keep AI outputs recommendation-only; do not use this demo for autonomous actuation.
+ - Preserve telemetry and operator acknowledgement for post-incident review.
+
+NOTICE:
+This report is generated from simulated telemetry for demonstration purposes.
+It is not a certified safety assessment and is not an official Grameenphone document.`;
+  $('reportText').textContent=text;$('reportModal').classList.add('show')
+}
+function closeReport(){$('reportModal').classList.remove('show')}
+function downloadReport(){const blob=new Blob([$('reportText').textContent],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='batteryguard-ai-simulated-incident-report.txt';a.click();URL.revokeObjectURL(a.href)}
+fetch('/api/v1/config',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()).then(x=>$('apiStatus').textContent='Live API '+x.version).catch(()=>$('apiStatus').textContent='Standalone Demo Ready');
+resetDemo();
+</script>
+</body>
+</html>
