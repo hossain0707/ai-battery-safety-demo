@@ -1,0 +1,27 @@
+# Reference profile only. Validate all values with the battery/UPS/BMS manufacturer,
+# fire engineer, Grameenphone engineering and the authority having jurisdiction.
+site:
+  id: bd-telco-dc-reference
+  country: Bangladesh
+  timezone: Asia/Dhaka
+  facility_class: telecom_data_center
+  redundancy_target: Tier-III-aligned
+
+battery_fleets:
+  - id: ups-lfp-a
+    chemistry: LFP
+    telemetry: [cell_temperature, pack_voltage, current, soc, h2, co, smoke, bms_alarm]
+  - id: legacy-vrla-a
+    chemistry: VRLA
+    telemetry: [block_voltage, temperature, current, resistance, h2, smoke, charger_alarm]
+
+integration:
+  preferred_protocols: [MQTT_TLS, Modbus_TCP_read_only, SNMPv3, OPC_UA]
+  write_control_enabled: false
+  safety_authority: hardwired_BMS_UPS_PLC_fire_system
+
+operations:
+  advisory_requires_ack: false
+  warning_requires_operator_verification: true
+  critical_requires_emergency_procedure: true
+  retain_audit_days: 365
