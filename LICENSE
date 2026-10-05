@@ -1,0 +1,40 @@
+BatteryGuard AI Proprietary License
+Version 1.0 — 2026
+
+Copyright (c) 2026 MD Najmul Hossain (GitHub: hossain0707)
+All Rights Reserved.
+
+1. Ownership
+All source code, software, documentation, designs, visual assets, models, concepts, configuration files, demo materials, and other original materials contained in this repository (collectively, the "Software") are owned by MD Najmul Hossain, unless a specific file or third-party dependency states otherwise.
+
+2. No Open-Source License Granted
+This repository is publicly viewable for demonstration, evaluation, portfolio, client, investor, research, and collaboration-discussion purposes. Public visibility does not grant an open-source license.
+
+Except as expressly permitted in writing by the copyright owner, you may not:
+- copy, reproduce, republish, or redistribute the Software;
+- modify, adapt, translate, or create derivative works;
+- use the Software or substantial portions of it in a commercial product or service;
+- sublicense, sell, rent, lease, transfer, or otherwise make the Software available to another party;
+- use the Software to build or train a competing commercial battery-safety product;
+- remove or alter copyright, ownership, attribution, safety, or proprietary notices.
+
+3. Evaluation
+Prospective clients, investors, research collaborators, and technology partners may review the repository and run the included demonstration solely for non-production evaluation. Any pilot, deployment, integration, commercial use, redistribution, or extended internal use requires prior written permission from the copyright owner.
+
+4. Third-Party Components
+Third-party libraries, frameworks, standards, trademarks, and other materials remain subject to their respective licenses and ownership. This license applies only to original material owned by the copyright owner.
+
+5. Trademarks and Names
+"BatteryGuard AI" and associated branding used in this repository are project/product identifiers of the copyright owner. References to Grameenphone or other companies are for contextual demonstration only and do not imply endorsement, partnership, or ownership by those companies.
+
+6. Safety Disclaimer
+The Software is an engineering reference, demonstration, and decision-support system. It is not a certified BMS, fire-control system, PLC safety controller, protection relay, or life-safety system. Production use requires independent engineering review, manufacturer validation, cybersecurity assessment, site acceptance testing, and all applicable regulatory approvals.
+
+7. No Warranty
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, SAFETY, RELIABILITY, OR FITNESS FOR PRODUCTION USE.
+
+8. Permission and Commercial Licensing
+For permission, pilot rights, commercial licensing, partnership, or deployment terms, contact the repository owner through:
+https://github.com/hossain0707
+
+No rights are granted except those expressly stated in this license.
