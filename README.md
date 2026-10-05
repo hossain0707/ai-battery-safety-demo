@@ -4,6 +4,16 @@ Production-oriented reference implementation for **AI-assisted stationary batter
 
 > **Safety boundary:** this software is an early-warning and operator decision-support layer. It is **not** a certified BMS, fire panel, PLC, protection relay or emergency shutdown controller. Physical protection remains the responsibility of validated hardwired systems and approved site procedures.
 
+
+## 🚀 Live Demo
+
+**[▶ Open the Battery Safety Simulation Demo](https://raw.githack.com/hossain0707/ai-battery-safety-demo/main/index.html)**
+
+The interactive browser demo visualizes the telecom/data-center battery fleet, AI risk scoring, multi-sensor anomaly detection, incident escalation, thermal/risk trends, and the recommendation-only safety architecture.
+
+> Demo mode uses simulated telemetry for demonstration purposes. It is not connected to a real Grameenphone data center or live battery equipment.
+
+
 ## What changed
 
 The original repository was a single browser simulation showing how AI might detect battery anomalies before a traditional threshold. This upgrade keeps the concept and adds a serious pilot foundation:
