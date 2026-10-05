@@ -138,7 +138,7 @@ h1{font-size:clamp(36px,5vw,68px);line-height:.98;letter-spacing:-.045em;margin:
         <div class="scan"></div>
         <div class="room" id="room">
           <div class="twin-rack" data-label="UPS-A1"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div>
-          <div class="twin-rack focus" id="focusRack" data-label="UPS-A2"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div>
+          <div class="twin-rack" id="focusRack" data-label="UPS-A2"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div>
           <div class="twin-rack" data-label="UPS-A3"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div>
           <div class="twin-rack" data-label="DC-48V"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div>
           <div class="twin-rack" data-label="UPS-B1"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div>
@@ -388,7 +388,7 @@ function applyScenarioFrame(step){
   $('storyProgress').style.width=((step+1)*20)+'%';
   const cfg=SCENARIOS[scenario];$('heroLead').textContent=step>=1?cfg.lead:'—';$('impactLead').textContent=step>=1?cfg.lead:'—';$('impactExposure').textContent=step>=1?cfg.exposure:'$0';$('impactMTTR').textContent=step>=1?cfg.decision:'—';
   $('twinState').textContent=r.state==='critical'?'CRITICAL RISK — VERIFY SAFETY SYSTEMS':r.state==='warning'?'WARNING — OPERATOR VERIFICATION':'AI MONITORING ACTIVE';
-  $('focusRack').classList.toggle('critical',r.state==='critical');$('siteSylhet').classList.toggle('alert',r.state!=='normal');
+  $('focusRack').classList.toggle('focus',r.state==='advisory'||r.state==='warning');$('focusRack').classList.toggle('critical',r.state==='critical');$('siteSylhet').classList.toggle('alert',r.state!=='normal');
   $('assetHealth').textContent=Math.round(82-level*22);$('assetBar').style.width=Math.round(82-level*22)+'%';$('assetAdvice').textContent=level>.6?'Priority inspection recommended after incident verification':'Watch-list · anomaly evidence increasing';
   $('aiNarrative').textContent=cfg.steps[step][0]+' AI remains advisory; the validated site protection layer is authoritative.';
   render()
@@ -404,7 +404,7 @@ function resetDemo(clearTimeline=true){
   if(storyTimer)clearInterval(storyTimer);storyTimer=null;storyStep=0;racks=BASE_RACKS.map(r=>({...r}));factors={...BASE_FACTORS};gas=8;volt=.4;
   temps=Array.from({length:54},(_,i)=>26.8+Math.sin(i/7)*.7+(i%3)*.08);risks=temps.map((_,i)=>.045+Math.max(0,Math.sin(i/9))*.035);
   $('storyProgress').style.width='0';$('heroLead').textContent='—';$('impactLead').textContent='—';$('impactExposure').textContent='$0';$('impactMTTR').textContent='—';
-  $('twinState').textContent='ALL SYSTEMS NOMINAL';$('focusRack').classList.remove('critical');$('siteSylhet').classList.remove('alert');
+  $('twinState').textContent='ALL SYSTEMS NOMINAL';$('focusRack').classList.remove('focus','critical');$('siteSylhet').classList.remove('alert');
   $('assetHealth').textContent='82';$('assetBar').style.width='82%';$('assetAdvice').textContent='Watch-list · voltage spread trending upward';
   $('aiNarrative').textContent='No abnormal pattern detected. The system is continuously correlating temperature behavior, gas concentration, voltage deviation and battery health.';
   if(clearTimeline){$('execTimeline').innerHTML='';$('engTimeline').innerHTML='';pushEvent('System initialized — all simulated sites nominal','good')}
