@@ -9,7 +9,7 @@ Production-oriented reference implementation for **AI-assisted stationary batter
 
 ### **BatteryGuard AI — Predict. Prevent. Protect.**
 
-**[▶ Launch the Interactive BatteryGuard AI Demo](https://raw.githack.com/hossain0707/ai-battery-safety-demo/main/index.html)**
+**[▶ Launch the Interactive BatteryGuard AI Demo](https://raw.githack.com/hossain0707/ai-battery-safety-demo/77249ecf149ab6835813d403a2cfbb711e27185f/index.html)**
 
 The browser demo is designed as a client-facing product experience, not only a developer dashboard. It includes:
 
