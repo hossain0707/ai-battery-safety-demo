@@ -23,7 +23,7 @@
 
 ---
 
-## 🚀 Live Client / Investor Demo
+## Live Client / Investor Demo
 
 <div align="center">
 
@@ -48,7 +48,7 @@
 
 ---
 
-## ✨ Product Vision
+## Product Vision
 
 BatteryGuard AI adds an intelligence layer **above existing battery, UPS, environmental, and fire monitoring**. Instead of waiting only for a fixed threshold to be exceeded, it correlates multiple weak signals to help identify developing risk earlier.
 
@@ -56,7 +56,7 @@ BatteryGuard AI adds an intelligence layer **above existing battery, UPS, enviro
 
 ---
 
-## 🎯 Why This Matters
+## Why This Matters
 
 | Traditional challenge | BatteryGuard AI approach | Intended operational value |
 |---|---|---|
@@ -70,7 +70,7 @@ BatteryGuard AI adds an intelligence layer **above existing battery, UPS, enviro
 
 ---
 
-## 🧠 AI Risk Intelligence
+## AI Risk Intelligence
 
 <img src="docs/assets/risk-intelligence.svg" alt="BatteryGuard AI risk intelligence architecture" width="100%" />
 
@@ -87,7 +87,7 @@ BatteryGuard AI adds an intelligence layer **above existing battery, UPS, enviro
 
 ---
 
-## 🧪 Six Investor-Friendly Demo Scenarios
+## Six Investor-Friendly Demo Scenarios
 
 | Scenario | Primary signals | AI story | Example outcome |
 |---|---|---|---|
@@ -100,7 +100,7 @@ BatteryGuard AI adds an intelligence layer **above existing battery, UPS, enviro
 
 ---
 
-## 📊 Safety State Model
+## Safety State Model
 
 | State | Typical meaning | Platform behavior | Physical control authority |
 |---|---|---|---|
@@ -113,7 +113,7 @@ Every API risk assessment returns `control_permitted = false`. That is intention
 
 ---
 
-## 🏗️ Production Architecture
+## Production Architecture
 
 ```mermaid
 flowchart LR
@@ -142,7 +142,7 @@ flowchart LR
 
 ---
 
-## 🔄 Incident Workflow
+## Incident Workflow
 
 ```mermaid
 sequenceDiagram
@@ -163,7 +163,7 @@ sequenceDiagram
 
 ---
 
-## 🛠️ Platform Capabilities
+## Platform Capabilities
 
 | Capability | Status | Notes |
 |---|---:|---|
@@ -185,7 +185,7 @@ sequenceDiagram
 
 ---
 
-## 🌐 API Surface
+## API Surface
 
 | Endpoint | Method | Purpose |
 |---|---:|---|
@@ -199,7 +199,7 @@ sequenceDiagram
 
 ---
 
-## 🧰 Technology Stack
+## Technology Stack
 
 | Layer | Technology |
 |---|---|
@@ -215,7 +215,7 @@ sequenceDiagram
 
 ---
 
-## ▶️ Run Locally
+## Run Locally
 
 ```bash
 cp .env.example .env
@@ -227,7 +227,7 @@ Dashboard: `http://localhost:8080` · API docs: `http://localhost:8080/docs` · 
 
 ---
 
-## 🇧🇩 Bangladesh / Grameenphone-Aligned Reference Context
+## Bangladesh / Grameenphone-Aligned Reference Context
 
 This repository is structured for a **Bangladesh telecom/data-center reference use case** and publicly described Grameenphone infrastructure context. It assumes mission-critical uptime, mixed lithium/VRLA fleets, existing BMS/UPS/fire protection, NOC-driven incident handling, and strong auditability.
 
@@ -236,7 +236,7 @@ This repository is structured for a **Bangladesh telecom/data-center reference u
 
 ---
 
-## 📚 Standards / Engineering Reference Set
+## Standards / Engineering Reference Set
 
 | Reference | Relevance |
 |---|---|
@@ -251,7 +251,7 @@ This repository is structured for a **Bangladesh telecom/data-center reference u
 
 ---
 
-## 🧭 Path to a Real Telecom / Data-Center Pilot
+## Path to a Real Telecom / Data-Center Pilot
 
 | Phase | Goal | Deliverable |
 |---|---|---|
@@ -265,13 +265,13 @@ This repository is structured for a **Bangladesh telecom/data-center reference u
 
 ---
 
-## ✅ Current Validation
+## Current Validation
 
 Automated tests cover nominal behavior, multi-sensor escalation, smoke-forced critical state, temperature-rate features, API health, telemetry ingestion/status, plus Docker build through CI.
 
 ---
 
-## 📁 Documentation
+## Documentation
 
 | Document | Purpose |
 |---|---|
@@ -283,7 +283,7 @@ Automated tests cover nominal behavior, multi-sensor escalation, smoke-forced cr
 
 ---
 
-## 🔐 Ownership & License
+## Ownership & License
 
 **Copyright © 2026 MD Najmul Hossain (GitHub: [hossain0707](https://github.com/hossain0707)). All Rights Reserved.**
 
